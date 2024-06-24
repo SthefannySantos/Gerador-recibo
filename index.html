@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emissão de Recibos</title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: #fbfbfb;
+    }
+
+    .dados {
+      display: grid;
+      grid-template-columns: auto;
+      background-color: #fff;
+      padding: 10px 5px;
+      margin: 20px;
+      text-align: center;
+    }
+
+    h1 {
+      padding: 0;
+      text-align: center
+    }
+
+    h2 {
+      margin: 0px;
+      font-weight: 500;
+      font-size: 18px;
+      text-align: center;
+    }
+
+    input {
+      display: block;
+      text-align: center;
+      margin: 5px 15px;
+    }
+
+    button {
+      display: block;
+      place-self: center;
+      margin: 5px 10px;
+      font-size: 20px;
+    }
+
+    .print {
+      display: none;
+      border: 1px solid black;
+      border-radius: 15px;
+      margin: 15px;
+      padding: 10px;
+    }
+
+    .print h2,
+    #val {
+      display: inline-block;
+      place-items: center;
+    }
+
+    .print h2 {
+      border: 1.5px solid darkgrey;
+      padding: 10px;
+      border-radius: 20px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .assinatura p {
+      text-align: center;
+      border-top: 1px solid black;
+      padding: 5px;
+      margin-left: 15px;
+      margin-right: 15px;
+      margin-top: 40px;
+    }
+
+    @media print {
+      .print {
+        display: block;
+      }
+
+      .dados {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="dados">
+    <h1>Gerar Recibo</h1>
+    <h2>Nome Emitente:</h2>
+    <input type="text" name="" id="emitente">
+    <h2>Recebemos de:</h2>
+    <input type="text" name="" id="nome">
+    <h2>Valor:</h2>
+    <input type="number" name="" id="valor" step="0.01">
+    <h2>Referente:</h2>
+    <input type="text" name="" id="servico">
+    <button onclick="gerarRecibo()">Gerar Recibo</button>
+  </div>
+
+  <div class="print" id="recibo">
+    <h1>Recibo - <span id="recibo_emitente"></span></h1>
+    <p>Recebemos de: <span id="recibo_nome"></span></p>
+    <p id="val">Valor R$</p>
+    <h2 id="recibo_valor">0,00</h2>
+    <p>Referente: <span id="recibo_servico"></span></p>
+    <p>Cidade: , Data: <span id="recibo_data"></span></p>
+    <div class="assinatura">
+      <p>Assinatura</p>
+    </div>
+  </div>
+
+  <script>
+    function gerarRecibo() {
+      // Pega os valores inseridos nos campos de entrada
+      let emitente = document.getElementById('emitente').value;
+      let nome = document.getElementById('nome').value;
+      let valor = parseFloat(document.getElementById('valor').value).toLocaleString('pt-br', { minimumFractionDigits: 2 });
+      let servico = document.getElementById('servico').value;
+      let data = dataAtual();
+
+      // Limpa qualquer recibo anterior na página
+      limparRecibosAnteriores();
+
+      // Preenche a primeira cópia do recibo usando as variáveis
+      let reciboOriginal = document.getElementById('recibo');
+      preencherRecibo(reciboOriginal, emitente, nome, valor, servico, data);
+
+      // Clona a primeira cópia do recibo
+      let reciboClone = reciboOriginal.cloneNode(true);
+
+      // Adiciona a primeira cópia do recibo clonado à página
+      document.body.appendChild(reciboClone);
+
+      // Função para imprimir
+      window.print();
+    }
+
+    function limparRecibosAnteriores() {
+      let recibos = document.querySelectorAll('.print');
+      if (recibos.length > 2) {
+        for (let i = 2; i < recibos.length; i++) {
+          recibos[i].remove();
+        }
+      }
+    }
+
+    function preencherRecibo(recibo, emitente, nome, valor, servico, data) {
+      recibo.querySelector('#recibo_emitente').innerHTML = emitente;
+      recibo.querySelector('#recibo_nome').innerHTML = nome;
+      recibo.querySelector('#recibo_valor').innerHTML = valor;
+      recibo.querySelector('#recibo_servico').innerHTML = servico;
+      recibo.querySelector('#recibo_data').innerHTML = data;
+    }
+
+    function dataAtual() {
+      let data = new Date();
+      return data.getDate() + "/" + (data.getMonth() + 1) + "/" + data.getFullYear();
+    }
+  </script>
+</body>
+
+</html>
